@@ -15,7 +15,8 @@ lb config --mode debian --distribution trixie --architectures amd64 \
     --bootappend-live 'boot=live components username=ty hostname=ty-recovery locales=en_US.UTF-8 keyboard-layouts=us console=ttyS0,115200 console=tty0'
 # Debian's stock menus wait indefinitely. Set both firmware paths to boot
 # the first live entry after five seconds without a keyboard action.
-cp -a /usr/share/live/build/bootloaders config/bootloaders
+mkdir -p config/bootloaders
+cp -a /usr/share/live/build/bootloaders/. config/bootloaders/
 sed -i 's/^timeout 0$/timeout 50/' config/bootloaders/isolinux/isolinux.cfg config/bootloaders/syslinux/syslinux.cfg
 printf '\nset timeout=5\n' >> config/bootloaders/grub-pc/config.cfg
 mkdir -p config/package-lists config/includes.chroot/opt/ty-recovery \
