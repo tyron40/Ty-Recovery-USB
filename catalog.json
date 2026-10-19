@@ -4,12 +4,50 @@
     {
       "id": "windows",
       "instructions": "Use Reset this PC in Windows Recovery settings. Choose keep files or remove everything in the official wizard. A clean install is different from restoring the original OEM factory image. Back up files and retain your BitLocker recovery key first.",
-      "url": "https://support.microsoft.com/windows"
+      "url": "https://support.microsoft.com/windows",
+      "label": "Windows PC"
     },
     {
       "id": "surface",
       "instructions": "For original factory recovery, obtain the exact Surface recovery image from Microsoft using the device serial number. ARM and Intel Surface images are different. The Windows reset wizard is also available for supported working installations.",
-      "url": "https://support.microsoft.com/surface"
+      "url": "https://support.microsoft.com/surface",
+      "label": "Microsoft Surface"
+    },
+    {
+      "id": "mac-apple-silicon",
+      "label": "Mac \u2014 Apple silicon",
+      "instructions": "Shut down. Hold the power button until startup options appear, choose Options, then Continue. Use macOS Recovery to repair or reinstall. Reinstalling alone does not erase personal files; erasing is a separate deliberate action. Credentials or the previous Apple Account may be required. A generic PC recovery ISO cannot substitute for Apple Recovery.",
+      "url": "https://support.apple.com/102518"
+    },
+    {
+      "id": "mac-intel",
+      "label": "Mac \u2014 Intel",
+      "instructions": "Shut down. Start up and immediately hold Command-R to enter macOS Recovery. If built-in recovery fails, consult Apple Internet Recovery instructions. Reinstalling alone does not erase personal files. External boot availability depends on the Mac and its startup security settings.",
+      "url": "https://support.apple.com/102518"
+    },
+    {
+      "id": "chromeos",
+      "label": "Chromebook / ChromeOS",
+      "instructions": "For a working device, use the official factory reset (Powerwash) workflow. For a damaged OS, use Google recovery instructions and an image matching the exact model or board shown on the recovery screen. Many Chromebooks enter recovery with Esc + Refresh + Power; tablets and other models differ. Some support internet recovery. USB recovery creation overwrites the USB; use a separate drive from this toolkit. Managed devices require the administrator.",
+      "url": "https://support.google.com/chromebook/answer/1080595"
+    },
+    {
+      "id": "ubuntu",
+      "label": "Ubuntu Linux",
+      "instructions": "Use the official Ubuntu installation guide and an image compatible with the hardware architecture. Write the image using an image writer on a separate USB, boot it using the device boot menu, and try the live environment to check hardware first. Reinstallation and disk erasure are chosen in the installer. A Linux reinstall is not an OEM factory restore.",
+      "url": "https://ubuntu.com/desktop/docs/en/latest/tutorial/install-ubuntu-desktop/"
+    },
+    {
+      "id": "linux",
+      "label": "Other Linux distributions",
+      "instructions": "Detection reports the currently running distribution only. Obtain the installation or OEM recovery image from that distribution or manufacturer and verify architecture, signatures and hardware support. Do not substitute an Ubuntu image for the original OS without choosing to change distributions. No universal Linux factory-reset command exists.",
+      "url": null
+    },
+    {
+      "id": "unknown",
+      "label": "Unknown / unsupported system",
+      "instructions": "No compatible recovery route has been established. Identify the exact manufacturer, model and original OS using labels or official support before proceeding. Do not erase or guess an image.",
+      "url": null
     }
   ]
 }
