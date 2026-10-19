@@ -11,7 +11,7 @@ cd "$build_dir"
 lb config --mode debian --distribution trixie --architectures amd64 \
     --binary-image iso-hybrid --bootloaders 'syslinux grub-efi' \
     --archive-areas 'main contrib non-free-firmware' --debian-installer none \
-    --apt-recommends false --iso-volume TY_RECOVERY \
+    --apt-recommends false --firmware-chroot false --firmware-binary false --iso-volume TY_RECOVERY \
     --bootappend-live 'boot=live components username=ty hostname=ty-recovery locales=en_US.UTF-8 keyboard-layouts=us console=ttyS0,115200 console=tty0'
 mkdir -p config/package-lists config/includes.chroot/opt/ty-recovery \
     config/includes.chroot/etc/skel config/includes.chroot/etc/systemd/system/multi-user.target.wants
