@@ -1,0 +1,54 @@
+name: Build bootable recovery USB
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'boot/**'
+      - '.github/workflows/build-bootable.yml'
+      - 'catalog.json'
+      - 'recovery.py'
+permissions:
+  contents: write
+concurrency:
+  group: bootable-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test platform routing
+        run: python3 -m unittest -v test_recovery.py
+      - name: Build Debian live ISO
+        run: |
+          docker run --rm --privileged -v "$PWD:/src" -w /src debian:trixie bash -ec '
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update
+            apt-get install -y --no-install-recommends live-build debootstrap squashfs-tools xorriso isolinux syslinux-common grub-pc-bin grub-efi-amd64-bin mtools dosfstools ca-certificates cpio file rsync wget gnupg zstd syslinux-utils apt-utils
+            bash boot/build.sh
+          '
+      - name: Install virtual boot test tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qemu-system-x86 ovmf
+      - name: Test BIOS and UEFI boot without internal disks
+        run: python3 boot/smoke_test.py dist/Ty-Recovery-USB-amd64.iso
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: boot-diagnostics-${{ github.run_number }}
+          path: |
+            boot-*.log
+            dist/packages.txt
+          if-no-files-found: ignore
+      - name: Publish tested ISO
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "bootable-${GITHUB_RUN_NUMBER}" \
+            dist/Ty-Recovery-USB-amd64.iso dist/SHA256SUMS dist/packages.txt \
+            --target "$GITHUB_SHA" --title "Bootable PC recovery USB — build ${GITHUB_RUN_NUMBER}" \
+            --notes "Debian live amd64 recovery assistant. BIOS and UEFI virtual boot checks passed. Flash the ISO using an image writer; copying files is insufficient. No automatic disk erasure or operating-system installer is included. Apple silicon, ARM PCs and Chromebook recovery require separate media. Secure Boot and physical hardware compatibility are not certified."
