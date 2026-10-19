@@ -1,6 +1,23 @@
 # Ty Recovery USB
 
-Cross-platform recovery assistant by Tyron. **This is source code, not a bootable USB image or an unattended factory-reset product.**
+Cross-platform recovery assistant by Tyron. **The repository includes a bootable PC ISO build pipeline and a portable assistant. It is not an unattended factory-reset product.**
+
+## Bootable PC edition
+
+The `Build bootable recovery USB` GitHub Actions workflow builds a Debian trixie amd64 hybrid ISO with legacy BIOS and x64 UEFI bootloaders, Python, networking tools, disk inventory and this toolkit. The text recovery menu opens on the first console after automatic live login. Internal disks are not automatically mounted. This edition boots independently of the OS on the computer; it does not run the installed Windows or replace Apple/ChromeOS recovery.
+
+The workflow publishes `Ty-Recovery-USB-amd64.iso`, `SHA256SUMS` and the package inventory to a GitHub Release **only after both diskless QEMU BIOS and UEFI smoke tests pass**. A workflow file alone is not proof that an ISO has been built: check the run and release assets. The tests check that the live environment and bundled toolkit start, not actual hardware recovery or disk installation. Secure Boot and physical hardware compatibility are not certified.
+
+To use a published ISO:
+
+1. Download the `.iso` and `SHA256SUMS` from the same GitHub Release. On Windows, use `Get-FileHash .\Ty-Recovery-USB-amd64.iso -Algorithm SHA256` and compare the digest. A checksum detects corruption; trust also depends on the download source.
+2. Use a reputable image writer such as Rufus or balenaEtcher to write the ISO onto a USB drive. **Writing the image erases the selected USB.** Select that drive carefully. Copying the ISO as an ordinary file onto a blank USB does not make it bootable.
+3. Insert it into a compatible Intel/AMD 64-bit PC and select the USB in the manufacturer's boot menu. The firmware selection may require manual action.
+4. Use the text menu to view hardware, list disks, read the appropriate recovery route or configure networking. It does not wipe or reinstall the computer.
+
+This PC image is not for ARM Windows PCs, Apple silicon Macs or standard Chromebook recovery. Intel Mac boot compatibility depends on model and firmware and is untested. Older 32-bit systems are not supported. Macs and Chromebooks retain their official recovery paths in the guide.
+
+For maintainers, the workflow builds on a disposable privileged Debian container, then uses QEMU on the GitHub runner. `boot/build.sh` requires root, Debian trixie amd64, live-build and the dependencies listed in the workflow. Use a disposable build machine. It does not target USB hardware: it writes an ISO file into `dist/`.
 
 ## Use this version
 
@@ -35,17 +52,17 @@ Downloads have a timeout and 1 MiB limit. The digest must match, schema and offi
 5. Show the exact target disk and loss of files, require per-device erase approval, then run a validated Windows Setup answer file or the manufacturer's supported image deployment. Keep recovery logs and fail safely after interrupted downloads or power loss. Unattended setup can automate supported stages; licensing, hardware eligibility and account setup still apply.
 6. Validate each supported profile on VMs and real hardware, including multiple disks, ARM, BitLocker, Secure Boot, failed downloads and missing drivers, before claiming support.
 
-The bundled `catalog.json` establishes a data-only route format. **Signed automatic updating, OS package downloads/verification, bootable-media builders and installation automation are not implemented in this version.** GitHub can host source and versioned release assets; it is not a remote agent server. Large OS images should come from official sources under their license, not be bundled indiscriminately into Git.
+The bundled `catalog.json` establishes a data-only route format. **The Debian live ISO builder is implemented. Signed automatic updating, target OS package downloads/verification, Windows PE/media builders and installation automation remain unimplemented.** GitHub can host source and versioned release assets; it is not a remote agent server. Large OS images should come from official sources under their license, not be bundled indiscriminately into Git.
 
 ## Recovery media coverage
 
 | Target | What must boot on a broken computer | Included here? |
 | --- | --- | --- |
-| Windows / Surface | Compatible WinPE or exact OEM recovery media with needed drivers | No; running-system assistant only |
-| Intel Mac | Compatible Apple Recovery or supported macOS installer | No; instructions only |
-| Apple silicon Mac | Apple Recovery; supported firmware recovery when needed | No; instructions only |
-| Chromebook | Exact model recovery image or supported internet recovery | No; instructions only |
-| Ubuntu / other Linux | Appropriate architecture and hardware-compatible distribution installer or OEM image | No; instructions only |
+| Windows / Surface | Compatible WinPE or exact OEM recovery media with needed drivers | Separate from the Debian PC live image; Windows recovery media not bundled |
+| Intel Mac | Compatible Apple Recovery or supported macOS installer | Official recovery media not bundled; instructions only |
+| Apple silicon Mac | Apple Recovery; supported firmware recovery when needed | Official recovery media not bundled; instructions only |
+| Chromebook | Exact model recovery image or supported internet recovery | Official recovery media not bundled; instructions only |
+| Ubuntu / other Linux | Appropriate architecture and hardware-compatible distribution installer or OEM image | Official recovery media not bundled; instructions only |
 | Unknown system | Manufacturer-supported recovery method | No; stops without choosing an image |
 
 One USB can carry these assistant files, but creating ChromeOS or other raw recovery media may overwrite its entire contents. Use a separate recovery drive. A PC multiboot setup is a possible future addition; it does not make Apple silicon or every Chromebook compatible with generic PC boot media.
