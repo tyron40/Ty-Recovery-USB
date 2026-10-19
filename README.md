@@ -1,12 +1,30 @@
 # Ty Recovery USB
 
-Initial Windows recovery assistant by Tyron. **This is source code, not a bootable USB image or an unattended factory-reset product.**
+Cross-platform recovery assistant by Tyron. **This is source code, not a bootable USB image or an unattended factory-reset product.**
 
-## Use the first version
+## Use this version
 
-Download the repository ZIP from GitHub's Code menu, extract it onto a USB drive, connect it to a Windows PC, and run `Start-Recovery.cmd`. You must start it yourself. Windows policy may block scripts; use your organization's approved signing/deployment process rather than disabling protections.
+Extract the ZIP onto a USB drive. This folder is portable source code, not bootable media. Launch it manually on a working computer:
 
-It detects manufacturer, model, running Windows version and architecture locally, selects Windows or Surface guidance, and offers to open Recovery settings or official support. `powershell -NoProfile -File .\Recovery.ps1 -DetectOnly` performs detection only. It sends no hardware information to GitHub and stores no serial numbers. It does not erase disks, press boot keys, fetch software, or install Windows.
+| System | Entry point | Implemented behavior |
+| --- | --- | --- |
+| Windows / Surface | `Start-Recovery.cmd` | Local Windows model detection and Recovery settings launcher |
+| macOS Intel or Apple silicon | `sh Start-Recovery.sh` from this folder in Terminal | Python 3 detection, including Apple silicon under Rosetta; otherwise opens the manual guide |
+| Linux | `sh Start-Recovery.sh` from this folder | Python 3 distro/hardware detection and recovery instructions; otherwise manual guide |
+| Chromebook / ChromeOS | Open `Recovery-Guide.html` in Files | Manual recovery guide without developer mode or Python |
+| Any working desktop browser | Open `Recovery-Guide.html` | Offline system selector; official external links require internet |
+
+Macs do not necessarily include Python 3. The HTML guide requires no installation. The `.command` wrapper is included, but USB filesystems may not preserve executable permissions; the `sh` command is the dependable entry point. Windows script policy may require approved signing. No security settings are changed.
+
+Detection identifies the **currently running environment**, not an OS on an offline disk. A Linux live USB will report that Linux environment, and Crostini reports its Linux container rather than the ChromeOS host. WSL is routed to an unsupported-environment notice and directs you to the Windows launcher. ChromeOS detection is available in Python only if run in a native environment exposing ChromeOS release files; use the manual guide on ordinary Chromebooks.
+
+Nothing is erased, no reset is triggered and no software package is installed by these assistants. Hardware information stays local. Python detection only: `python3 recovery.py --detect-only`. Windows detection only: `powershell -NoProfile -File .\Recovery.ps1 -DetectOnly`.
+
+## Optional GitHub catalog fetch
+
+The Python assistant can retrieve a **data-only instruction catalog** from this repository using `--catalog-url URL --sha256 TRUSTED_DIGEST`. Use an immutable commit URL under `https://raw.githubusercontent.com/tyron40/Ty-Recovery-USB/` and obtain the digest through a trusted review of that exact file. Hash the file with `sha256sum catalog.json` on Linux or `shasum -a 256 catalog.json` on macOS.
+
+Downloads have a timeout and 1 MiB limit. The digest must match, schema and official destination hosts are checked, and data is never evaluated as code. A checksum is not a signature; its authenticity depends on how you obtain it. The offline catalog is the default. This is not an image downloader, executable action service, automatic updater or full signed distribution system. It does not send the hardware report to GitHub.
 
 ## What is needed for the requested automated product
 
@@ -17,18 +35,20 @@ It detects manufacturer, model, running Windows version and architecture locally
 5. Show the exact target disk and loss of files, require per-device erase approval, then run a validated Windows Setup answer file or the manufacturer's supported image deployment. Keep recovery logs and fail safely after interrupted downloads or power loss. Unattended setup can automate supported stages; licensing, hardware eligibility and account setup still apply.
 6. Validate each supported profile on VMs and real hardware, including multiple disks, ARM, BitLocker, Secure Boot, failed downloads and missing drivers, before claiming support.
 
-The bundled `catalog.json` establishes a data-only route format. **Cloud updating, signed package verification, a WinPE builder and installation automation are not implemented in this version.** GitHub can host source and versioned release assets; it is not a remote agent server. Large OS images should come from official sources under their license, not be bundled indiscriminately into Git.
+The bundled `catalog.json` establishes a data-only route format. **Signed automatic updating, OS package downloads/verification, bootable-media builders and installation automation are not implemented in this version.** GitHub can host source and versioned release assets; it is not a remote agent server. Large OS images should come from official sources under their license, not be bundled indiscriminately into Git.
 
-## Platform coverage
+## Recovery media coverage
 
-| Platform | Current implementation | Future route |
+| Target | What must boot on a broken computer | Included here? |
 | --- | --- | --- |
-| Running Windows | Local detection and recovery settings launcher | Tested WinPE installation profiles |
-| Surface running Windows | Family routing; no exact image selection | Exact model/serial recovery image and drivers |
-| Unbootable Windows | Not supported | Bootable WinPE media |
-| Mac | Not supported | Apple-supported Recovery workflow; some firmware restores need another Mac |
-| Chromebook | Not supported | Exact board/model ChromeOS recovery media |
-| Linux / other systems | Not supported | Distribution-specific supported installers |
+| Windows / Surface | Compatible WinPE or exact OEM recovery media with needed drivers | No; running-system assistant only |
+| Intel Mac | Compatible Apple Recovery or supported macOS installer | No; instructions only |
+| Apple silicon Mac | Apple Recovery; supported firmware recovery when needed | No; instructions only |
+| Chromebook | Exact model recovery image or supported internet recovery | No; instructions only |
+| Ubuntu / other Linux | Appropriate architecture and hardware-compatible distribution installer or OEM image | No; instructions only |
+| Unknown system | Manufacturer-supported recovery method | No; stops without choosing an image |
+
+One USB can carry these assistant files, but creating ChromeOS or other raw recovery media may overwrite its entire contents. Use a separate recovery drive. A PC multiboot setup is a possible future addition; it does not make Apple silicon or every Chromebook compatible with generic PC boot media.
 
 No universal all-model support is claimed. A clean Windows install does not necessarily restore OEM apps or original factory partitions. No bypass of activation locks, organization management, firmware passwords or encryption is provided.
 
@@ -40,4 +60,4 @@ No universal all-model support is claimed. A clean Windows install does not nece
 
 ## Validation status
 
-Catalog JSON and route shape checked during creation. Windows scripts require a real Windows test; they have not been run on a Windows PC. No reset has been attempted.
+Run `python3 -m unittest -v test_recovery.py` from this folder. Routing tests cover Intel Macs, native Apple silicon and Rosetta, ChromeOS release files, Ubuntu, other Linux, WSL, unknown platforms, destination restrictions, duplicate catalogs and mandatory cloud checksums. Shell syntax and detection-only execution were checked in a Linux environment. No hardware recovery, installation, Windows launch or macOS launch has been tested.
