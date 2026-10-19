@@ -4,7 +4,7 @@ Cross-platform recovery assistant by Tyron. **The repository includes a bootable
 
 ## Bootable PC edition
 
-The `Build bootable recovery USB` GitHub Actions workflow builds a Debian trixie amd64 hybrid ISO with legacy BIOS and x64 UEFI bootloaders, Python, networking tools, disk inventory and this toolkit. The text recovery menu opens on the first console after automatic live login. Internal disks are not automatically mounted. This edition boots independently of the OS on the computer; it does not run the installed Windows or replace Apple/ChromeOS recovery.
+The `Build bootable recovery USB` GitHub Actions workflow builds a Debian trixie amd64 hybrid ISO with legacy BIOS and x64 UEFI bootloaders, Python, networking tools, disk inventory and this toolkit. The boot menu starts the live system after five seconds; the text recovery menu opens on the first console after automatic live login. Internal disks are not automatically mounted. This edition boots independently of the OS on the computer; it does not run the installed Windows or replace Apple/ChromeOS recovery.
 
 The workflow publishes `Ty-Recovery-USB-amd64.iso`, `SHA256SUMS` and the package inventory to a GitHub Release **only after both diskless QEMU BIOS and UEFI smoke tests pass**. A workflow file alone is not proof that an ISO has been built: check the run and release assets. The tests check that the live environment and bundled toolkit start, not actual hardware recovery or disk installation. Secure Boot and physical hardware compatibility are not certified.
 
@@ -76,5 +76,7 @@ No universal all-model support is claimed. A clean Windows install does not nece
 - https://support.apple.com/108900
 
 ## Validation status
+
+Bootable build 4 (commit `8fc476cdb8d27da24859c2a609d55c1a6084b9a1`) completed successfully. Both diskless QEMU BIOS and UEFI boot checks reached the bundled toolkit. Download the ISO and checksums from [the tested release](https://github.com/tyron40/Ty-Recovery-USB/releases/tag/bootable-4). These are virtual boot checks, not certification of physical USB, Secure Boot or factory-reset compatibility.
 
 Run `python3 -m unittest -v test_recovery.py` from this folder. Routing tests cover Intel Macs, native Apple silicon and Rosetta, ChromeOS release files, Ubuntu, other Linux, WSL, unknown platforms, destination restrictions, duplicate catalogs and mandatory cloud checksums. Shell syntax and detection-only execution were checked in a Linux environment. No hardware recovery, installation, Windows launch or macOS launch has been tested.
