@@ -80,3 +80,13 @@ No universal all-model support is claimed. A clean Windows install does not nece
 Bootable build 4 (commit `8fc476cdb8d27da24859c2a609d55c1a6084b9a1`) completed successfully. Both diskless QEMU BIOS and UEFI boot checks reached the bundled toolkit. Download the ISO and checksums from [the tested release](https://github.com/tyron40/Ty-Recovery-USB/releases/tag/bootable-4). These are virtual boot checks, not certification of physical USB, Secure Boot or factory-reset compatibility.
 
 Run `python3 -m unittest -v test_recovery.py` from this folder. Routing tests cover Intel Macs, native Apple silicon and Rosetta, ChromeOS release files, Ubuntu, other Linux, WSL, unknown platforms, destination restrictions, duplicate catalogs and mandatory cloud checksums. Shell syntax and detection-only execution were checked in a Linux environment. No hardware recovery, installation, Windows launch or macOS launch has been tested.
+
+## Connect the USB to Elite Recovery Studio
+
+New images built from this version include `companion.py`. Boot the live image, configure networking (menu option 4), then choose **6. Connect to Elite Recovery website**. In your signed-in Elite site, open Recovery Studio, create a one-time code and enter it in the companion. Review the report and type PAIR to upload it. Keep the program running. Session credentials stay in memory and expire after 24 hours.
+
+The companion reports manufacturer/model, CPU, architecture, firmware, memory and disk inventory without serial numbers or personal files. It polls an authenticated session for three fixed request types: rescan, download a checksum-verified PC toolkit, or locally confirmed firmware restart. It never executes chat text or arbitrary remote shell commands. Downloads require local DOWNLOAD approval; UEFI restarts require local RESTART approval plus supported firmware and privileges. No disk erasure, installer execution or boot-order modification is implemented. A downloaded ISO must still be prepared as supported boot media.
+
+Dashboard: https://eliteitemlisting.pages.dev/#recovery
+
+On an already-running PC, Mac or Linux machine with Python 3.8+, run `python3 companion.py` (Windows: `python companion.py`). On ordinary Chromebooks use the recovery guide; their Linux container cannot control host firmware. For an offline report use `--report-only`. Do not post pairing codes publicly.

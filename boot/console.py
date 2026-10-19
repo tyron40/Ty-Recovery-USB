@@ -17,6 +17,7 @@ def main():
     catalog = recovery.load_catalog()
     if args.self_test:
         assert Path('/opt/ty-recovery/Recovery-Guide.html').is_file()
+        compile(Path('/opt/ty-recovery/companion.py').read_text(), 'companion.py', 'exec')
         marker = 'TY_RECOVERY_BOOT_OK'
         print(marker, flush=True)
         try:
@@ -30,7 +31,7 @@ def main():
         print('\n=== TY RECOVERY USB ===')
         print('Booted recovery environment. Internal disks are not automatically mounted.')
         print('This menu does not erase disks or install an operating system.')
-        print('1. Show computer hardware\n2. List disks (read-only)\n3. Choose recovery instructions\n4. Set up networking\n5. Exit to live shell')
+        print('1. Show computer hardware\n2. List disks (read-only)\n3. Choose recovery instructions\n4. Set up networking\n5. Exit to live shell\n6. Connect to Elite Recovery website')
         try:
             choice = input('Choose: ').strip()
         except EOFError:
@@ -59,6 +60,9 @@ def main():
                 print('This live image contains no Windows, macOS or ChromeOS installer.')
         elif choice == '4':
             subprocess.run(['nmtui'], check=False)
+        elif choice == '6':
+            print('Open Recovery Studio in your Elite account to create a pairing code.')
+            subprocess.run([sys.executable, str(Path(__file__).resolve().parent / 'companion.py')], check=False)
         elif choice == '5':
             return
 

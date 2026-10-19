@@ -42,7 +42,7 @@ firmware-linux-free
 firmware-iwlwifi
 firmware-realtek
 PACKAGES
-for asset in recovery.py catalog.json Recovery-Guide.html Recovery.ps1 Start-Recovery.cmd Start-Recovery.sh Start-Recovery.command README.md; do
+for asset in companion.py recovery.py catalog.json Recovery-Guide.html Recovery.ps1 Start-Recovery.cmd Start-Recovery.sh Start-Recovery.command README.md; do
     install -m 0644 "$source_dir/$asset" "config/includes.chroot/opt/ty-recovery/$asset"
 done
 install -m 0644 "$source_dir/boot/console.py" config/includes.chroot/opt/ty-recovery/console.py
