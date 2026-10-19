@@ -90,3 +90,7 @@ The companion reports manufacturer/model, CPU, architecture, firmware, memory an
 Dashboard: https://eliteitemlisting.pages.dev/#recovery
 
 On an already-running PC, Mac or Linux machine with Python 3.8+, run `python3 companion.py` (Windows: `python companion.py`). On ordinary Chromebooks use the recovery guide; their Linux container cannot control host firmware. For an offline report use `--report-only`. Do not post pairing codes publicly.
+
+
+### Graphical companion
+The graphical source helper is `recovery-gui.pyw`, alongside `companion.py`. It displays the hardware report before pairing, accepts a dashboard code, and uses local confirmation dialogs. Close the window to disconnect. Python 3 with Tk and a graphical file association is required on an installed OS; no signed standalone desktop installer is included. The next USB build includes Xorg, Tk and graphical network settings, and launches the helper automatically on tty1 after live boot. Selecting USB at firmware startup may still require a person. The ISO boot smoke test does not prove that the GUI works on every display or that OS installation works. There is no erase or OS installer in this version.

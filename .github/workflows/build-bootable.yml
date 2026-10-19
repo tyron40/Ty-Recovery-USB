@@ -8,6 +8,8 @@ on:
       - '.github/workflows/build-bootable.yml'
       - 'catalog.json'
       - 'recovery.py'
+      - 'companion.py'
+      - 'recovery-gui.pyw'
 permissions:
   contents: write
 concurrency:
@@ -21,6 +23,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test platform routing
         run: python3 -m unittest -v test_recovery.py
+      - name: Check graphical companion opens without a terminal
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-tk xvfb xauth
+          xvfb-run -a /usr/bin/python3 recovery-gui.pyw --self-test
       - name: Build Debian live ISO
         run: |
           docker run --rm --privileged -v "$PWD:/src" -w /src debian:trixie bash -ec '

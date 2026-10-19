@@ -27,6 +27,13 @@ live-config
 live-config-systemd
 systemd-sysv
 python3
+python3-tk
+xserver-xorg
+xinit
+openbox
+xterm
+network-manager-gnome
+dbus-x11
 network-manager
 wpasupplicant
 ca-certificates
@@ -42,13 +49,13 @@ firmware-linux-free
 firmware-iwlwifi
 firmware-realtek
 PACKAGES
-for asset in companion.py recovery.py catalog.json Recovery-Guide.html Recovery.ps1 Start-Recovery.cmd Start-Recovery.sh Start-Recovery.command README.md; do
+for asset in recovery-gui.pyw companion.py recovery.py catalog.json Recovery-Guide.html Recovery.ps1 Start-Recovery.cmd Start-Recovery.sh Start-Recovery.command README.md; do
     install -m 0644 "$source_dir/$asset" "config/includes.chroot/opt/ty-recovery/$asset"
 done
 install -m 0644 "$source_dir/boot/console.py" config/includes.chroot/opt/ty-recovery/console.py
 cat > config/includes.chroot/etc/skel/.bash_profile <<'PROFILE'
 if [ "$(tty)" = /dev/tty1 ]; then
-    python3 /opt/ty-recovery/console.py
+    exec startx /usr/bin/python3 /opt/ty-recovery/recovery-gui.pyw -- :0
 fi
 PROFILE
 cat > config/includes.chroot/etc/systemd/system/ty-recovery-check.service <<'SERVICE'
