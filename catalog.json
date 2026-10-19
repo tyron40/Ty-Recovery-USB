@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "routes": [
+    {
+      "id": "windows",
+      "instructions": "Use Reset this PC in Windows Recovery settings. Choose keep files or remove everything in the official wizard. A clean install is different from restoring the original OEM factory image. Back up files and retain your BitLocker recovery key first.",
+      "url": "https://support.microsoft.com/windows"
+    },
+    {
+      "id": "surface",
+      "instructions": "For original factory recovery, obtain the exact Surface recovery image from Microsoft using the device serial number. ARM and Intel Surface images are different. The Windows reset wizard is also available for supported working installations.",
+      "url": "https://support.microsoft.com/surface"
+    }
+  ]
+}
